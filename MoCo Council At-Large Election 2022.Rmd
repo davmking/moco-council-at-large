@@ -1,0 +1,20 @@
+---
+title: "MoCo Council At-Large Election 2022"
+author: "Dav King"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = F, message = F)
+```
+
+```{r libraries}
+library(tidyverse)
+```
+
+```{r data}
+precinct <- read.csv("GP22_16PrecinctsDemocratic.csv")
+councilData <- precinct %>% 
+  filter(Office.Name == "County Council At Large")
+```
