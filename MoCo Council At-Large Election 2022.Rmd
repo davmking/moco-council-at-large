@@ -22,7 +22,21 @@ councilAL <- precinct %>%
   filter(Office.Name == "County Council At Large") %>% 
   mutate(total.votes = Early.Votes + Election.Night.Votes +
            Mail.In.Ballot.1.Votes + Provisional.Votes + Mail.In.Ballot.2.Votes)
+```
+
+Correlation plot - total votes, county council at-large
+
+```{r correlations between councilmembers}
 councilWide <- councilAL %>% 
   select(Election.District...Precinct, Candidate.Name, total.votes) %>% 
-  pivot_wider(names_from = Candidate.Name, values_from = total.votes)
+  pivot_wider(names_from = Candidate.Name, values_from = total.votes) %>% 
+  rename(Albornoz = `Gabe Albornoz`, Brooks = `Brandy H. M. Brooks`,
+         Gassaway = `Dana E. Gassaway`, Glass = `Evan Glass`, Goldberg = 
+         `Scott Evan Goldberg`, Hucker = `Tom Hucker`, Jawando = `Will Jawando`,
+         Sayles = `Laurie-Anne Sayles`)
+mat <- councilWide %>% 
+  select(-Election.District...Precinct) %>% 
+  cor()
+corrplot.mixed(mat, order = "hclust")
 ```
+
