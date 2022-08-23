@@ -22,18 +22,207 @@ councilAL <- precinct %>%
   filter(Office.Name == "County Council At Large") %>% 
   mutate(total.votes = Early.Votes + Election.Night.Votes +
            Mail.In.Ballot.1.Votes + Provisional.Votes + Mail.In.Ballot.2.Votes)
-```
-
-Correlation plot - total votes, county council at-large
-
-```{r correlations between councilmembers}
 councilWide <- councilAL %>% 
   select(Election.District...Precinct, Candidate.Name, total.votes) %>% 
   pivot_wider(names_from = Candidate.Name, values_from = total.votes) %>% 
   rename(Albornoz = `Gabe Albornoz`, Brooks = `Brandy H. M. Brooks`,
          Gassaway = `Dana E. Gassaway`, Glass = `Evan Glass`, Goldberg = 
          `Scott Evan Goldberg`, Hucker = `Tom Hucker`, Jawando = `Will Jawando`,
-         Sayles = `Laurie-Anne Sayles`)
+         Sayles = `Laurie-Anne Sayles`) %>% 
+  mutate(voteTotal = Albornoz+Brooks+Gassaway+Glass+Goldberg+Hucker+Jawando+
+           Sayles)
+```
+
+```{r vote types}
+councilTotal <- councilWide %>% 
+  summarize(AlbornozTot = sum(Albornoz),
+            BrooksTot = sum(Brooks),
+            GassawayTot = sum(Gassaway),
+            GlassTot = sum(Glass),
+            GoldbergTot = sum(Goldberg),
+            HuckerTot = sum(Hucker),
+            JawandoTot = sum(Jawando),
+            SaylesTot = sum(Sayles))
+councilPerc <- councilWide %>% 
+  summarize(AlbornozPerc = mean(Albornoz/voteTotal, na.rm = T),
+            BrooksPerc = mean(Brooks/voteTotal, na.rm = T),
+            GassawayPerc = mean(Gassaway/voteTotal, na.rm = T),
+            GlassPerc = mean(Glass/voteTotal, na.rm = T),
+            GoldbergPerc = mean(Goldberg/voteTotal, na.rm = T),
+            HuckerPerc = mean(Hucker/voteTotal, na.rm = T),
+            JawandoPerc = mean(Jawando/voteTotal, na.rm = T),
+            SaylesPerc = mean(Sayles/voteTotal, na.rm = T))
+
+councilEV <- councilAL %>% 
+  select(Election.District...Precinct, Candidate.Name, Early.Votes) %>% 
+  pivot_wider(names_from = Candidate.Name, values_from = Early.Votes) %>% 
+  rename(Albornoz = `Gabe Albornoz`, Brooks = `Brandy H. M. Brooks`,
+         Gassaway = `Dana E. Gassaway`, Glass = `Evan Glass`, Goldberg = 
+         `Scott Evan Goldberg`, Hucker = `Tom Hucker`, Jawando = `Will Jawando`,
+         Sayles = `Laurie-Anne Sayles`) %>% 
+  mutate(EVTotal = Albornoz+Brooks+Gassaway+Glass+Goldberg+Hucker+Jawando+
+           Sayles)
+councilEVTotal <- councilEV %>% 
+  summarize(AlbornozTot = sum(Albornoz),
+            BrooksTot = sum(Brooks),
+            GassawayTot = sum(Gassaway),
+            GlassTot = sum(Glass),
+            GoldbergTot = sum(Goldberg),
+            HuckerTot = sum(Hucker),
+            JawandoTot = sum(Jawando),
+            SaylesTot = sum(Sayles))
+councilEVPerc <- councilEV %>% 
+  summarize(AlbornozPerc = mean(Albornoz/EVTotal, na.rm = T),
+            BrooksPerc = mean(Brooks/EVTotal, na.rm = T),
+            GassawayPerc = mean(Gassaway/EVTotal, na.rm = T),
+            GlassPerc = mean(Glass/EVTotal, na.rm = T),
+            GoldbergPerc = mean(Goldberg/EVTotal, na.rm = T),
+            HuckerPerc = mean(Hucker/EVTotal, na.rm = T),
+            JawandoPerc = mean(Jawando/EVTotal, na.rm = T),
+            SaylesPerc = mean(Sayles/EVTotal, na.rm = T))
+
+councilEDay <- councilAL %>% 
+  select(Election.District...Precinct, Candidate.Name, Election.Night.Votes) %>% 
+  pivot_wider(names_from = Candidate.Name,
+              values_from = Election.Night.Votes) %>% 
+  rename(Albornoz = `Gabe Albornoz`, Brooks = `Brandy H. M. Brooks`,
+         Gassaway = `Dana E. Gassaway`, Glass = `Evan Glass`, Goldberg = 
+         `Scott Evan Goldberg`, Hucker = `Tom Hucker`, Jawando = `Will Jawando`,
+         Sayles = `Laurie-Anne Sayles`) %>% 
+  mutate(EDayTotal = Albornoz+Brooks+Gassaway+Glass+Goldberg+Hucker+Jawando+
+           Sayles)
+councilEDayTotal <- councilEDay %>% 
+  summarize(AlbornozTot = sum(Albornoz),
+            BrooksTot = sum(Brooks),
+            GassawayTot = sum(Gassaway),
+            GlassTot = sum(Glass),
+            GoldbergTot = sum(Goldberg),
+            HuckerTot = sum(Hucker),
+            JawandoTot = sum(Jawando),
+            SaylesTot = sum(Sayles))
+councilEDayPerc <- councilEDay %>% 
+  summarize(AlbornozPerc = mean(Albornoz/EDayTotal, na.rm = T),
+            BrooksPerc = mean(Brooks/EDayTotal, na.rm = T),
+            GassawayPerc = mean(Gassaway/EDayTotal, na.rm = T),
+            GlassPerc = mean(Glass/EDayTotal, na.rm = T),
+            GoldbergPerc = mean(Goldberg/EDayTotal, na.rm = T),
+            HuckerPerc = mean(Hucker/EDayTotal, na.rm = T),
+            JawandoPerc = mean(Jawando/EDayTotal, na.rm = T),
+            SaylesPerc = mean(Sayles/EDayTotal, na.rm = T))
+
+councilMail1 <- councilAL %>% 
+  select(Election.District...Precinct, Candidate.Name,
+         Mail.In.Ballot.1.Votes) %>% 
+  pivot_wider(names_from = Candidate.Name,
+              values_from = Mail.In.Ballot.1.Votes) %>% 
+  rename(Albornoz = `Gabe Albornoz`, Brooks = `Brandy H. M. Brooks`,
+         Gassaway = `Dana E. Gassaway`, Glass = `Evan Glass`, Goldberg = 
+         `Scott Evan Goldberg`, Hucker = `Tom Hucker`, Jawando = `Will Jawando`,
+         Sayles = `Laurie-Anne Sayles`) %>% 
+  mutate(Mail1Total = Albornoz+Brooks+Gassaway+Glass+Goldberg+Hucker+Jawando+
+           Sayles)
+councilMail1Total <- councilMail1 %>% 
+  summarize(AlbornozTot = sum(Albornoz),
+            BrooksTot = sum(Brooks),
+            GassawayTot = sum(Gassaway),
+            GlassTot = sum(Glass),
+            GoldbergTot = sum(Goldberg),
+            HuckerTot = sum(Hucker),
+            JawandoTot = sum(Jawando),
+            SaylesTot = sum(Sayles))
+councilMail1Perc <- councilMail1 %>% 
+  summarize(AlbornozPerc = mean(Albornoz/Mail1Total, na.rm = T),
+            BrooksPerc = mean(Brooks/Mail1Total, na.rm = T),
+            GassawayPerc = mean(Gassaway/Mail1Total, na.rm = T),
+            GlassPerc = mean(Glass/Mail1Total, na.rm = T),
+            GoldbergPerc = mean(Goldberg/Mail1Total, na.rm = T),
+            HuckerPerc = mean(Hucker/Mail1Total, na.rm = T),
+            JawandoPerc = mean(Jawando/Mail1Total, na.rm = T),
+            SaylesPerc = mean(Sayles/Mail1Total, na.rm = T))
+
+councilMail2 <- councilAL %>% 
+  select(Election.District...Precinct, Candidate.Name,
+         Mail.In.Ballot.2.Votes) %>% 
+  pivot_wider(names_from = Candidate.Name,
+              values_from = Mail.In.Ballot.2.Votes) %>% 
+  rename(Albornoz = `Gabe Albornoz`, Brooks = `Brandy H. M. Brooks`,
+         Gassaway = `Dana E. Gassaway`, Glass = `Evan Glass`, Goldberg = 
+         `Scott Evan Goldberg`, Hucker = `Tom Hucker`, Jawando = `Will Jawando`,
+         Sayles = `Laurie-Anne Sayles`) %>% 
+  mutate(Mail2Total = Albornoz+Brooks+Gassaway+Glass+Goldberg+Hucker+Jawando+
+           Sayles)
+councilMail2Total <- councilMail2 %>% 
+  summarize(AlbornozTot = sum(Albornoz),
+            BrooksTot = sum(Brooks),
+            GassawayTot = sum(Gassaway),
+            GlassTot = sum(Glass),
+            GoldbergTot = sum(Goldberg),
+            HuckerTot = sum(Hucker),
+            JawandoTot = sum(Jawando),
+            SaylesTot = sum(Sayles))
+councilMail2Perc <- councilMail2 %>% 
+  summarize(AlbornozPerc = mean(Albornoz/Mail2Total, na.rm = T),
+            BrooksPerc = mean(Brooks/Mail2Total, na.rm = T),
+            GassawayPerc = mean(Gassaway/Mail2Total, na.rm = T),
+            GlassPerc = mean(Glass/Mail2Total, na.rm = T),
+            GoldbergPerc = mean(Goldberg/Mail2Total, na.rm = T),
+            HuckerPerc = mean(Hucker/Mail2Total, na.rm = T),
+            JawandoPerc = mean(Jawando/Mail2Total, na.rm = T),
+            SaylesPerc = mean(Sayles/Mail2Total, na.rm = T))
+
+councilProv <- councilAL %>% 
+  select(Election.District...Precinct, Candidate.Name, Provisional.Votes) %>% 
+  pivot_wider(names_from = Candidate.Name, values_from = Provisional.Votes) %>% 
+  rename(Albornoz = `Gabe Albornoz`, Brooks = `Brandy H. M. Brooks`,
+         Gassaway = `Dana E. Gassaway`, Glass = `Evan Glass`, Goldberg = 
+         `Scott Evan Goldberg`, Hucker = `Tom Hucker`, Jawando = `Will Jawando`,
+         Sayles = `Laurie-Anne Sayles`) %>% 
+  mutate(ProvTotal = Albornoz+Brooks+Gassaway+Glass+Goldberg+Hucker+Jawando+
+           Sayles)
+councilProvTotal <- councilProv %>% 
+  summarize(AlbornozTot = sum(Albornoz),
+            BrooksTot = sum(Brooks),
+            GassawayTot = sum(Gassaway),
+            GlassTot = sum(Glass),
+            GoldbergTot = sum(Goldberg),
+            HuckerTot = sum(Hucker),
+            JawandoTot = sum(Jawando),
+            SaylesTot = sum(Sayles))
+councilProvPerc <- councilProv %>% 
+  summarize(AlbornozPerc = mean(Albornoz/ProvTotal, na.rm = T),
+            BrooksPerc = mean(Brooks/ProvTotal, na.rm = T),
+            GassawayPerc = mean(Gassaway/ProvTotal, na.rm = T),
+            GlassPerc = mean(Glass/ProvTotal, na.rm = T),
+            GoldbergPerc = mean(Goldberg/ProvTotal, na.rm = T),
+            HuckerPerc = mean(Hucker/ProvTotal, na.rm = T),
+            JawandoPerc = mean(Jawando/ProvTotal, na.rm = T),
+            SaylesPerc = mean(Sayles/ProvTotal, na.rm = T))
+
+fullVoteTypes <- tibble(Candidate = c("Albornoz", "Brooks", "Gassaway", "Glass",
+                                     "Goldberg", "Hucker", "Jawando", "Sayles"),
+                        `Vote Total` = c(councilTotal),
+                        `Vote Percentage` = c(round(councilPerc, 3)),
+                        `Early Vote Total` = c(councilEVTotal),
+                        `Early Vote Percentage` = c(round(councilEVPerc, 3)),
+                        `E-Day Vote Total` = c(councilEDayTotal),
+                        `E-Day Vote Percentage` = c(round(councilEDayPerc, 3)),
+                        `Pre E-Day Mail Vote Total` = c(councilMail1Total),
+                        `Pre E-Day Mail Vote Percentage` =
+                          c(round(councilMail1Perc, 3)),
+                        `Post E-Day Mail Vote Total` = c(councilMail2Total),
+                        `Post E-Day Mail Vote Percentage` =
+                          c(round(councilMail2Perc, 3)),
+                        `Provisional Vote Total` = c(councilProvTotal),
+                        `Provisional Vote Percentage` =
+                          c(round(councilProvPerc, 3))) %>% 
+  t()
+knitr::kable(fullVoteTypes)
+```
+
+
+Correlation plot - total votes, county council at-large
+
+```{r correlations between councilmembers}
 mat <- councilWide %>% 
   select(-Election.District...Precinct) %>% 
   cor()
@@ -58,15 +247,27 @@ councilFull <- councilWide %>%
 ```
 
 ```{r district 2 correlations}
-council1 <- councilFull %>% 
+council2 <- councilFull %>% 
   filter(Office.District == "002") %>% 
   select(Albornoz, Brooks, Gassaway, Glass, Goldberg, Hucker, Jawando, Sayles,
          `Marilyn Balcombe`, `Lorna Phillips Forde`, `William Roberts`) %>% 
   rename(Balcombe = `Marilyn Balcombe`, Forde = `Lorna Phillips Forde`, 
          Roberts = `William Roberts`)
-c1cor <- cor(council1)
-#c1spear <- cor(council1, method = "s")
-corrplot.mixed(c1cor)
-#corrplot.mixed(c1spear)
+c2cor <- cor(council2)
+#c2spear <- cor(council2, method = "s")
+corrplot.mixed(c2cor)
+#corrplot.mixed(c2spear)
 ```
 
+```{r district 3 correlations}
+council3 <- councilFull %>% 
+  filter(Office.District == "003") %>% 
+  select(Albornoz, Brooks, Gassaway, Glass, Goldberg, Hucker, Jawando, Sayles,
+         `Tiquia J. Bennett`, `Sidney A. Katz`, `Robert Wu`) %>% 
+  rename(Bennett = `Tiquia J. Bennett`, Katz = `Sidney A. Katz`,
+         Wu = `Robert Wu`)
+c3cor <- cor(council3)
+corrplot.mixed(c3cor)
+```
+
+EVERYTHING HAS TO BE PERCENTAGES
