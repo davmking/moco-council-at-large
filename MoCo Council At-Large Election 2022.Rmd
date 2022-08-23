@@ -11,10 +11,18 @@ knitr::opts_chunk$set(echo = TRUE, warning = F, message = F)
 
 ```{r libraries}
 library(tidyverse)
+library(corrplot)
 ```
+
+Create data:
 
 ```{r data}
 precinct <- read.csv("GP22_16PrecinctsDemocratic.csv")
-councilData <- precinct %>% 
-  filter(Office.Name == "County Council At Large")
+councilAL <- precinct %>% 
+  filter(Office.Name == "County Council At Large") %>% 
+  mutate(total.votes = Early.Votes + Election.Night.Votes +
+           Mail.In.Ballot.1.Votes + Provisional.Votes + Mail.In.Ballot.2.Votes)
+councilWide <- councilAL %>% 
+  select(Election.District...Precinct, Candidate.Name, total.votes) %>% 
+  pivot_wider(names_from = Candidate.Name, values_from = total.votes)
 ```
