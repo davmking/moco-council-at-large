@@ -37,6 +37,36 @@ councilWide <- councilAL %>%
 mat <- councilWide %>% 
   select(-Election.District...Precinct) %>% 
   cor()
+#spearmat <- councilWide %>% 
+  #select(-Election.District...Precinct) %>% 
+  #cor(method = "s")
 corrplot.mixed(mat, order = "hclust")
+#corrplot.mixed(spearmat, order = "hclust")
+```
+
+```{r correlations between at-large and districts}
+councilDistrict <- precinct %>% 
+  filter(Office.Name == "County Council") %>% 
+  mutate(total.votes = Early.Votes + Election.Night.Votes +
+           Mail.In.Ballot.1.Votes + Provisional.Votes +
+           Mail.In.Ballot.2.Votes) %>% 
+  select(Election.District...Precinct, Office.District,
+         Candidate.Name, total.votes) %>% 
+  pivot_wider(names_from = Candidate.Name, values_from = total.votes)
+councilFull <- councilWide %>% 
+  full_join(councilDistrict)
+```
+
+```{r district 2 correlations}
+council1 <- councilFull %>% 
+  filter(Office.District == "002") %>% 
+  select(Albornoz, Brooks, Gassaway, Glass, Goldberg, Hucker, Jawando, Sayles,
+         `Marilyn Balcombe`, `Lorna Phillips Forde`, `William Roberts`) %>% 
+  rename(Balcombe = `Marilyn Balcombe`, Forde = `Lorna Phillips Forde`, 
+         Roberts = `William Roberts`)
+c1cor <- cor(council1)
+#c1spear <- cor(council1, method = "s")
+corrplot.mixed(c1cor)
+#corrplot.mixed(c1spear)
 ```
 
