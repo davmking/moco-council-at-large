@@ -6,12 +6,13 @@ output: pdf_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, warning = F, message = F)
+knitr::opts_chunk$set(echo = F, warning = F, message = F)
 ```
 
 ```{r libraries}
 library(tidyverse)
 library(corrplot)
+library(viridis)
 ```
 
 Create data:
@@ -33,7 +34,16 @@ councilWide <- councilAL %>%
            Sayles)
 ```
 
-```{r vote types}
+```{r vote types, eval = F}
+#perc <- function(candidate, dataset, voteType){
+  #dataset$candidate/dataset$voteType
+#}
+
+#candidates = c(Albornoz, Brooks, Gassaway, Glass,
+               #Goldberg, Hucker, Jawando, Sayles)
+
+#councilTest <- perc(candidates, councilWide, voteTotal)
+
 councilTotal <- councilWide %>% 
   summarize(AlbornozTot = sum(Albornoz),
             BrooksTot = sum(Brooks),
@@ -217,6 +227,32 @@ fullVoteTypes <- tibble(Candidate = c("Albornoz", "Brooks", "Gassaway", "Glass",
                           c(round(councilProvPerc, 3))) %>% 
   t()
 knitr::kable(fullVoteTypes)
+```
+
+```{r candidate votes}
+councilAL <- councilAL %>% 
+  mutate(Candidate.Name = case_when(Candidate.Name == "Gabe Albornoz" ~ "Albornoz",
+                                    Candidate.Name == "Brandy H. M. Brooks" ~ "Brooks",
+                                    Candidate.Name == "Dana E. Gassaway" ~ "Gassaway",
+                                    Candidate.Name == "Evan Glass" ~ "Glass",
+                                    Candidate.Name == "Scott Evan Goldberg" ~ "Goldberg",
+                                    Candidate.Name == "Tom Hucker" ~ "Hucker",
+                                    Candidate.Name == "Will Jawando" ~ "Jawando",
+                                    Candidate.Name == "Laurie-Anne Sayles" ~ "Sayles",
+                                    T ~ ""))
+
+councilAL %>% 
+  group_by(Election.District...Precinct) %>% 
+  mutate(overall = sum(total.votes)) %>% 
+  pivot_longer(c(Early.Votes, Election.Night.Votes, Mail.In.Ballot.1.Votes, Mail.In.Ballot.2.Votes,
+                 Provisional.Votes)) %>% 
+  ggplot(aes(x = Candidate.Name, y = value, fill = name)) +
+  geom_col(position = "fill") +
+  theme_bw() +
+  labs(y = "Proportion of Votes", fill = "Vote Type",
+       title = "The Composition of Votes Varied by Candidate") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  scale_fill_viridis(discrete = T, option = "A")
 ```
 
 
